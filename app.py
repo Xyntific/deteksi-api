@@ -22,8 +22,8 @@ st.sidebar.title("Settings")
 confidence_threshold = st.sidebar.slider("Confidence Threshold", min_value=0.0, max_value=1.0, value=0.5)
 
 # Telegram bot details
-bot_token = "7440075729:AAHgebp2usoIQYWMjdnMYGDA29DrcT4COA8"
-chat_id = "972821613"
+bot_token = "YOUR_TELEGRAM_BOT_TOKEN"
+chat_id = "YOUR_CHAT_ID"
 
 # Define a class to process video frames for webcam
 class YOLOVideoProcessor(VideoProcessorBase):
