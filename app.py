@@ -22,8 +22,8 @@ st.sidebar.title("Settings")
 confidence_threshold = st.sidebar.slider("Confidence Threshold", min_value=0.0, max_value=1.0, value=0.5)
 
 # Telegram bot details
-bot_token = "YOUR_TELEGRAM_BOT_TOKEN"
-chat_id = "YOUR_CHAT_ID"
+bot_token = "7440075729:AAHgebp2usoIQYWMjdnMYGDA29DrcT4COA8"
+chat_id = "972821613"
 
 # Define a class to process video frames for webcam
 class YOLOVideoProcessor(VideoProcessorBase):
@@ -140,15 +140,13 @@ if page == "Dashboard":
         2. Pergi ke halaman "Deteksi File Video" untuk mengunggah dan memproses file video untuk deteksi objek.
         3. Sesuaikan ambang kepercayaan di sidebar pengaturan untuk mengatur sensitivitas deteksi.
 
-        
-
         ---
         **Dikembangkan oleh [Xyntific-]**
     """)
 # Live webcam detection
 elif page == "Live Webcam Detection":
     st.header("Live Webcam Detection")
-    webrtc_ctx = webrtc_streamer(key="example", video_processor_factory=lambda: YOLOVideoProcessor(confidence_threshold))
+    webrtc_ctx = webrtc_streamer(key="example", video_processor_factory=lambda: YOLOVideoProcessor(confidence_threshold), rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
 
     if webrtc_ctx.video_processor:
         st.write("Webcam is running")
