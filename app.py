@@ -3,7 +3,13 @@ from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, WebRtcMode, RT
 from ultralytics import YOLO
 import cv2
 import numpy as np
+import tempfile
+import os
 import requests
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.DEBUG)
 
 # Load YOLOv8 model
 model = YOLO("best(2).pt")
@@ -47,32 +53,36 @@ class YOLOVideoProcessor(VideoProcessorBase):
         requests.post(url, data=data, files=files)
 
     def recv(self, frame):
-        # Convert the frame to an OpenCV image
-        image = frame.to_ndarray(format="bgr24")
+        try:
+            # Convert the frame to an OpenCV image
+            image = frame.to_ndarray(format="bgr24")
 
-        # YOLOv8 object detection
-        results = self.model(image)
-        detection_message = ""
+            # YOLOv8 object detection
+            results = self.model(image)
+            detection_message = ""
 
-        # Draw bounding boxes and labels on image
-        for result in results:
-            boxes = result.boxes
-            for box in boxes:
-                x1, y1, x2, y2 = box.xyxy[0].tolist()
-                conf = box.conf[0].item()
-                cls = box.cls[0].item()
-                label = self.model.names[int(cls)]
+            # Draw bounding boxes and labels on image
+            for result in results:
+                boxes = result.boxes
+                for box in boxes:
+                    x1, y1, x2, y2 = box.xyxy[0].tolist()
+                    conf = box.conf[0].item()
+                    cls = box.cls[0].item()
+                    label = self.model.names[int(cls)]
 
-                # Check if confidence is above threshold
-                if conf >= self.confidence_threshold:
-                    detection_message += f"API TERDETEKSI🔥!!! dengan confidence {conf:.2f}\n"
-                    # Draw bounding box
-                    cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
-                    cv2.putText(image, f"Api {conf:.2f}", (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                    # Send notification for each detected object
-                    self.send_telegram_notification(image, detection_message.strip())
+                    # Check if confidence is above threshold
+                    if conf >= self.confidence_threshold:
+                        detection_message += f"API TERDETEKSI🔥!!! dengan confidence {conf:.2f}\n"
+                        # Draw bounding box
+                        cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+                        cv2.putText(image, f"Api {conf:.2f}", (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                        # Send notification for each detected object
+                        self.send_telegram_notification(image, detection_message.strip())
 
-        return frame.from_ndarray(image, format="bgr24")
+            return frame.from_ndarray(image, format="bgr24")
+        except Exception as e:
+            logging.error(f"Error processing frame: {e}")
+            return frame
 
 # Function to process video file
 def process_video_file(video_path, confidence_threshold):
