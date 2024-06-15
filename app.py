@@ -1,10 +1,8 @@
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoProcessorBase
+from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, WebRtcMode, RTCConfiguration
 from ultralytics import YOLO
 import cv2
 import numpy as np
-import tempfile
-import os
 import requests
 
 # Load YOLOv8 model
@@ -24,6 +22,11 @@ confidence_threshold = st.sidebar.slider("Confidence Threshold", min_value=0.0, 
 # Telegram bot details
 bot_token = "7440075729:AAHgebp2usoIQYWMjdnMYGDA29DrcT4COA8"
 chat_id = "972821613"
+
+# WebRTC configuration
+RTC_CONFIGURATION = RTCConfiguration({
+    "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+})
 
 # Define a class to process video frames for webcam
 class YOLOVideoProcessor(VideoProcessorBase):
@@ -146,9 +149,16 @@ if page == "Dashboard":
 # Live webcam detection
 elif page == "Live Webcam Detection":
     st.header("Live Webcam Detection")
-    webrtc_ctx = webrtc_streamer(key="example", video_processor_factory=lambda: YOLOVideoProcessor(confidence_threshold), rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
+    webrtc_ctx = webrtc_streamer(
+        key="example",
+        mode=WebRtcMode.SENDRECV,
+        rtc_configuration=RTC_CONFIGURATION,
+        video_processor_factory=lambda: YOLOVideoProcessor(confidence_threshold),
+        media_stream_constraints={"video": True, "audio": False},
+        async_processing=True,
+    )
 
-    if webrtc_ctx.video_processor:
+    if webrtc_ctx.state.playing:
         st.write("Webcam is running")
     else:
         st.write("Turn on your webcam to start object detection")
