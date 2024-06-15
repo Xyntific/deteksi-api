@@ -33,7 +33,7 @@ chat_id = "972821613"
 RTC_CONFIGURATION = RTCConfiguration({
     "iceServers": [
         {"urls": ["stun:stun.l.google.com:19302"]},
-        {"urls": ["turn:relay1.expressturn.com:3478"], "username": "efTPAQPRUIF1A3P9TI", "credential": "4kACBkXarf06tuI2"}
+        {"urls": "turn:openrelay.metered.ca:80", "username": "openrelayproject", "credential": "openrelayproject"}
     ]
 })
 
