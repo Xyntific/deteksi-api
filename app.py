@@ -32,7 +32,7 @@ chat_id = "972821613"
 # WebRTC configuration with TURN servers
 RTC_CONFIGURATION = RTCConfiguration({
     "iceServers": [
-        {"urls": ["relay1.expressturn.com:3478"]},
+        {"urls": ["stun:stun.l.google.com:19302"]},
         {"urls": ["turn:relay1.expressturn.com:3478"], "username": "efTPAQPRUIF1A3P9TI", "credential": "4kACBkXarf06tuI2"}
     ]
 })
