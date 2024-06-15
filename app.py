@@ -29,9 +29,12 @@ confidence_threshold = st.sidebar.slider("Confidence Threshold", min_value=0.0, 
 bot_token = "7440075729:AAHgebp2usoIQYWMjdnMYGDA29DrcT4COA8"
 chat_id = "972821613"
 
-# WebRTC configuration
+# WebRTC configuration with TURN servers
 RTC_CONFIGURATION = RTCConfiguration({
-    "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+    "iceServers": [
+        {"urls": ["relay1.expressturn.com:3478"]},
+        {"urls": ["turn:relay1.expressturn.com:3478"], "username": "efTPAQPRUIF1A3P9TI", "credential": "4kACBkXarf06tuI2"}
+    ]
 })
 
 # Define a class to process video frames for webcam
